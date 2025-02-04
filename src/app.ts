@@ -6,14 +6,24 @@ import rateLimit from 'express-rate-limit'
 import helmet from 'helmet'
 import compression from 'compression'
 import cookieParser from 'cookie-parser'
+import cors from 'cors'
+
+
 
 const app = express()
+app.use(cookieParser())
+
+app.use(cors({
+    origin:'*',
+    methods:['GET', 'POST', 'DELETE', 'PUT'], 
+    credentials: true
+}))
 
 //Permitir que comprenda los datos en json
 app.use(express.json())
 app.use(helmet())
 app.use(compression())
-app.use(cookieParser())
+
 
 const limiter = rateLimit({
     //maximo numero de intentos
