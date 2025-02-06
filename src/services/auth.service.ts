@@ -1,11 +1,12 @@
 import { PrismaClient, User } from "@prisma/client";
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
+import { prisma } from "../database/database";
 
 //AQUI ACCEDEMOS A LA BASE DE DATOS
 
 //MAL usar un patron singleton
-const prisma = new PrismaClient
+
 const TOKEN_PASSWORD = process.env.TOKEN_PASSWORD || 'pass'
 
 //Insertamos la información en la base de datos

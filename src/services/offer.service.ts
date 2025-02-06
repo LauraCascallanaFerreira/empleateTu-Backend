@@ -1,4 +1,4 @@
-import { Offer, PrismaClient} from "@prisma/client";
+import { Offer, PrismaClient, User} from "@prisma/client";
 import { HttpException } from "../exceptions/httpExceptions";
 
 const prisma = new PrismaClient()
@@ -78,12 +78,35 @@ export class OfferService{
         }
     }
 
-    static async rate(idUser: number, id: number, value: number){
-        //si existe lo actualizo
-        // si no existe lo creo
+    static async rate(idOffer: number, idUser: number, value: number):Promise<void>{
+        //Validar que el rating está dentro del rango permitido
+        if(value<0 || value>5){
+            throw new Error("Rating must be between 0 and 5")
+        }
+
+        //Verificar si la oferta existe
+        const offer = await prisma.offer.findUnique({where: {id:idOffer}});
+        if(!offer){
+            throw new Error("Offer not found.")
+        }
+
+        //Actualizar o crear la calificación
+        await prisma.rate.upsert({
+            where: {idUser_idOffer: {idUser, idOffer}},
+            update: {value},
+            create: {idUser, idOffer, value},
+        });
     }
 
-    static async getRate(id: number){
-
+    static async getRate(idOffer: number){
+        const ratingStats = await prisma.rate.aggregate({
+            where: {idOffer},
+            _avg: {value: true}, //Calcular el promedio
+            _count: {value: true}, ////Contar el total de calificaciones
+        });
+        return{
+            totalRatings: ratingStats._count.value,
+            averageRating: ratingStats._avg.value?.toFixed(2)
+        }
     }
 }
