@@ -22,9 +22,8 @@ model User {
   createdAt            DateTime @default(now())
   updateAt             DateTime @updatedAt
 
-  Offers               Offer[]
-
-  Rate Rate[]
+  offers               Offer[]
+  rates                Rate[]
 } 
 
 model Offer {
@@ -47,7 +46,7 @@ model Offer {
   idUserCreator        Int
   userCreator          User @relation(fields: [idUserCreator], references: [id])
 
-  Rate Rate[]
+  rates                Rate[]
 }
 
 model Category{
@@ -57,7 +56,7 @@ model Category{
   createdAt            DateTime @default(now())
   updateAt             DateTime @updatedAt
 
-  offerts              Offer[]
+  offers              Offer[]
 }
 
 model Rate{
